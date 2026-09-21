@@ -1,0 +1,47 @@
+CREATE TABLE IF NOT EXISTS admin_user (
+ id BIGINT PRIMARY KEY AUTO_INCREMENT,
+ username VARCHAR(64) NOT NULL UNIQUE,
+ password_hash VARCHAR(255) NOT NULL,
+ created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+CREATE TABLE IF NOT EXISTS source_file (
+ id BIGINT PRIMARY KEY AUTO_INCREMENT,
+ original_name VARCHAR(255) NOT NULL,
+ file_path VARCHAR(512) NOT NULL,
+ page_count INT NOT NULL DEFAULT 0,
+ convert_status VARCHAR(20) NOT NULL,
+ error_message TEXT,
+ uploaded_by BIGINT NOT NULL,
+ created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+ INDEX idx_source_created(created_at),
+ CONSTRAINT fk_source_admin FOREIGN KEY(uploaded_by) REFERENCES admin_user(id)
+);
+CREATE TABLE IF NOT EXISTS news_page (
+ id BIGINT PRIMARY KEY AUTO_INCREMENT,
+ source_file_id BIGINT NOT NULL,
+ page_number INT NOT NULL,
+ image_path VARCHAR(512) NOT NULL,
+ thumbnail_path VARCHAR(512) NOT NULL,
+ play_status VARCHAR(20) NOT NULL DEFAULT 'OFFLINE',
+ sort_order INT NOT NULL DEFAULT 0,
+ created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+ UNIQUE KEY uq_source_page(source_file_id,page_number),
+ INDEX idx_play_order(play_status,sort_order),
+ CONSTRAINT fk_news_source FOREIGN KEY(source_file_id) REFERENCES source_file(id)
+);
+CREATE TABLE IF NOT EXISTS display_config (
+ id BIGINT PRIMARY KEY,
+ display_seconds INT NOT NULL DEFAULT 10,
+ animation_enabled BOOLEAN NOT NULL DEFAULT TRUE,
+ animation_type VARCHAR(32) NOT NULL DEFAULT 'fade',
+ animation_duration DECIMAL(5,2) NOT NULL DEFAULT 0.80,
+ logo_enabled BOOLEAN NOT NULL DEFAULT TRUE,
+ logo_path VARCHAR(512),
+ logo_position VARCHAR(20) NOT NULL DEFAULT 'top-left',
+ default_image_path VARCHAR(512),
+ updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+INSERT IGNORE INTO display_config(id) VALUES(1);

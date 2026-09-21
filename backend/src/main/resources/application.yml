@@ -1,0 +1,18 @@
+server:
+  port: 8080
+spring:
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/newsplay?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai
+    username: ${NEWSPLAY_DB_USER:root}
+    password: ${NEWSPLAY_DB_PASSWORD:}
+  sql:
+    init:
+      mode: always
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+newsplay:
+  storage: ${NEWSPLAY_STORAGE:../uploads}
+  python: ${NEWSPLAY_PYTHON:python}
+  initial-password: ${NEWSPLAY_INITIAL_PASSWORD:}
