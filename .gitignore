@@ -5,3 +5,4 @@ frontend/dist/
 .env
 *.log
 logs/
+work/
